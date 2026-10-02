@@ -174,13 +174,13 @@
     .card-scene {
       perspective: 1000px;
       width: 100%;
-      min-height: 250px;
+      min-height: 230px;
       margin: 2px 0;
     }
 
     .card {
       width: 100%;
-      min-height: 250px;
+      min-height: 230px;
       position: relative;
       cursor: pointer;
       transition: transform 0.15s ease;
@@ -188,9 +188,9 @@
 
     .card-face {
       width: 100%;
-      min-height: 250px;
+      min-height: 230px;
       border-radius: 18px;
-      padding: 22px 18px;
+      padding: 20px 18px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -221,7 +221,7 @@
       font-size: 0.85rem;
       font-weight: 700;
       color: var(--accent);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .card-text {
@@ -235,6 +235,54 @@
       font-size: 0.75rem;
       color: #6d3a54;
       margin-top: 10px;
+    }
+
+    /* Seletor de Tempo de Quem Recebe */
+    .time-selector-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .time-selector-header {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .time-selector-header strong {
+      color: #ff9ebb;
+    }
+
+    .time-options {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+    }
+
+    .time-btn {
+      background: #1b0714;
+      border: 1px solid #3d142b;
+      color: #fff;
+      padding: 8px 0;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .time-btn.active {
+      background: var(--primary);
+      border-color: #ff758c;
+      color: #fff;
+      box-shadow: 0 0 8px var(--primary-glow);
     }
 
     /* Ações */
@@ -532,7 +580,7 @@
 
   <header>
     <h1>Nicolau & Thaís</h1>
-    <div class="subtitle">Intensidade a Dois • 60 Desafios</div>
+    <div class="subtitle">Intensidade a Dois • Controle de Tempo</div>
   </header>
 
   <div class="container">
@@ -584,7 +632,23 @@
       </div>
     </div>
 
-    <!-- Ações (com 2 Pulos por jogador) -->
+    <!-- Seletor Rápido de Tempo (Quem Recebe Escolhe) -->
+    <div class="time-selector-panel">
+      <div class="time-selector-header">
+        <span>Quem recebe a ação escolhe o tempo:</span>
+        <strong id="time-picker-name">Thaís decide</strong>
+      </div>
+      <div class="time-options">
+        <button class="time-btn" onclick="selectTime(30)">30s</button>
+        <button class="time-btn active" onclick="selectTime(60)">60s</button>
+        <button class="time-btn" onclick="selectTime(90)">90s</button>
+        <button class="time-btn" onclick="selectTime(120)">120s</button>
+        <button class="time-btn" onclick="selectTime(150)">150s</button>
+        <button class="time-btn" onclick="selectTime(180)">180s</button>
+      </div>
+    </div>
+
+    <!-- Ações (2 Pulos por jogador) -->
     <div class="actions">
       <button class="btn-draw" onclick="drawCard()">
         <span>🎲</span> Sortear Desafio
@@ -599,8 +663,8 @@
     <!-- Cronômetro -->
     <div class="timer-panel">
       <div>
-        <div style="font-size:0.75rem; color:var(--text-muted);">TEMPO DO DESAFIO</div>
-        <div class="timer-time" id="timer-display">00:00</div>
+        <div style="font-size:0.75rem; color:var(--text-muted);">TEMPO RESTANTE</div>
+        <div class="timer-time" id="timer-display">01:00</div>
       </div>
       <div class="timer-controls">
         <button class="timer-btn" onclick="startTimer()">Iniciar</button>
@@ -658,9 +722,7 @@
         <button class="modal-tab" data-filter="custom" onclick="filterModalList('custom')">Criados</button>
       </div>
 
-      <div class="modal-list" id="modal-list-container">
-        <!-- Itens inseridos via Javascript -->
-      </div>
+      <div class="modal-list" id="modal-list-container"></div>
     </div>
   </div>
 
@@ -685,71 +747,71 @@
     const defaultChallenges = [
       // NÍVEL 1 (15)
       { lvl: 1, text: "Olhar Fixo: Fiquem frente a frente nus ou de lingerie, olhando nos olhos sem rir nem desviar. Quem desviar cumpre um castigo escolhido pelo outro.", time: 60 },
-      { lvl: 1, text: "Massagem Firme: Massageie ombros, nuca e pescoço do outro com as pontas dos dedos e a respiração colada no ouvido.", time: 120 },
+      { lvl: 1, text: "Massagem Firme: Massageie ombros, nuca e pescoço do outro com as pontas dos dedos e a respiração colada no ouvido.", time: 60 },
       { lvl: 1, text: "Confissão Íntima: Conte baixinho no ouvido do parceiro qual fantasia recente com ele(a) te deixou com mais tesão.", time: 60 },
-      { lvl: 1, text: "Trilha Lenta: Percorra unhas suaves dos pulsos até as costelas e quadris do parceiro em ritmo contínuo.", time: 90 },
+      { lvl: 1, text: "Trilha Lenta: Percorra unhas suaves dos pulsos até as costelas e quadris do parceiro em ritmo contínuo.", time: 60 },
       { lvl: 1, text: "Sussurros do Desejo: Fale 3 coisas bem explícitas que você quer fazer com o corpo do outro ainda hoje.", time: 60 },
       { lvl: 1, text: "Beijos Sem Rir: Distribua beijos e mordidas suaves pelo maxilar e pescoço; quem recebe não pode esboçar nenhum sorriso.", time: 60 },
-      { lvl: 1, text: "Exploração às Cegas: O parceiro fecha os olhos enquanto você desliza as mãos pelo corpo dele(a), evitando as partes íntimas.", time: 120 },
+      { lvl: 1, text: "Exploração às Cegas: O parceiro fecha os olhos enquanto você desliza as mãos pelo corpo dele(a), evitando as partes íntimas.", time: 60 },
       { lvl: 1, text: "Mapeamento de Pulso: Beije e chupe com calma os pontos de pulso: pescoço, pulsos, clavícula e atrás dos joelhos.", time: 60 },
-      { lvl: 1, text: "Despir com Carinho: Remova uma peça de roupa do parceiro bem devagar, beijando cada centímetro de pele exposta.", time: 90 },
+      { lvl: 1, text: "Despir com Carinho: Remova uma peça de roupa do parceiro bem devagar, beijando cada centímetro de pele exposta.", time: 60 },
       { lvl: 1, text: "Respiração no Umbigo: Aproxime a boca da barriga do outro soltando ar quente e beijando suavemente sem usar as mãos.", time: 60 },
-      { lvl: 1, text: "Massagem nas Coxas: Acaricie com firmeza a parte interna das coxas, chegando a dois dedos da virilha e recuando.", time: 120 },
-      { lvl: 1, text: "Contato Pele com Pele: Deitem-se colados de frente sem roupas, sentindo o calor e o coração bater, sem beijo na boca.", time: 90 },
+      { lvl: 1, text: "Massagem nas Coxas: Acaricie com firmeza a parte interna das coxas, chegando a dois dedos da virilha e recuando.", time: 60 },
+      { lvl: 1, text: "Contato Pele com Pele: Deitem-se colados de frente sem roupas, sentindo o calor e o coração bater, sem beijo na boca.", time: 60 },
       { lvl: 1, text: "Elogio Sem Filtro: Fale em detalhes o que você mais adora visualmente e fisicamente no corpo do parceiro.", time: 60 },
-      { lvl: 1, text: "Carícia com Tecido: Passe uma peça de roupa suave ou tecido deslizando pelo peito, mamilos e abdômen do outro.", time: 90 },
-      { lvl: 1, text: "Beijo Prolongado: Um beijo de língua lento, voraz e profundo sem interrupção e sem tirar as mãos do corpo do outro.", time: 120 },
+      { lvl: 1, text: "Carícia com Tecido: Passe uma peça de roupa suave ou tecido deslizando pelo peito, mamilos e abdômen do outro.", time: 60 },
+      { lvl: 1, text: "Beijo Prolongado: Um beijo de língua lento, voraz e profundo sem interrupção e sem tirar as mãos do corpo do outro.", time: 60 },
 
       // NÍVEL 2 (15)
-      { lvl: 2, text: "Regra dos 90 Segundos: Beije, chupe e lamba pescoço, seios/peitoral e virilha, mas a boca está estritamente proibida.", time: 90 },
-      { lvl: 2, text: "Atenção aos Mamilos: Estimule os mamilos do parceiro alternando lambidas circulares, sucção firme e sopros de ar quente.", time: 120 },
-      { lvl: 2, text: "Silêncio Forçado: Quem recebe os toques íntimos é proibido de gemer. Se emitir som, cumpre um castigo do parceiro.", time: 90 },
-      { lvl: 2, text: "Despir com os Dentes: Remova a calcinha ou cueca do outro utilizando somente os dentes e lábios, sem mãos.", time: 90 },
-      { lvl: 2, text: "Oral Tease: Comece o sexo oral, mas lamba apenas virilha, coxas e a base, sem tocar a ponta mais sensível.", time: 120 },
-      { lvl: 2, text: "Mãos Imobilizadas: Segure os pulsos do parceiro acima da cabeça dele(a) na cama enquanto beija seu peito e abdômen com força.", time: 120 },
-      { lvl: 2, text: "Contraste Térmico: Use a boca aquecida ou algo gelado para percorrer a virilha e a parte interna das coxas lentamente.", time: 90 },
-      { lvl: 2, text: "Sexo Oral Dedicado: Faça sexo oral contínuo e sem pressa no parceiro, focando no ritmo exato que ele(a) mais gosta.", time: 180 },
-      { lvl: 2, text: "Toque com Olhar Fixo: Masturbe o parceiro com as mãos enquanto ambos mantêm contato visual ininterrupto.", time: 120 },
-      { lvl: 2, text: "Dedos Lubrificados: Use lubrificante ou saliva para estimular com ritmo a intimidade do parceiro, de suave a firme.", time: 120 },
-      { lvl: 2, text: "Mordidas e Cabelo: Dê mordidas firmes no pescoço e nádegas combinadas com pegada forte no cabelo na nuca.", time: 90 },
-      { lvl: 2, text: "Fricção Direta Sem Entrada: Esfreguem as genitálias nuas diretamente com pressão e ritmo, mas com penetração proibida.", time: 120 },
-      { lvl: 2, text: "Deslize Corporal: Deslize o peito e o corpo suado sobre o corpo do outro com óleo de massagem ou lubrificante.", time: 120 },
-      { lvl: 2, text: "Edging Preliminar: Leve o parceiro com a boca ou mãos até a beirada de gozar e pare tudo no segundo exato.", time: 180 },
-      { lvl: 2, text: "Toque nas Nádegas: Espalhe lubrificante massageando as nádegas e a virilha com pressão firme e respiração colada.", time: 120 },
+      { lvl: 2, text: "Regra dos Segundos: Beije, chupe e lamba pescoço, seios/peitoral e virilha, mas a boca está estritamente proibida.", time: 60 },
+      { lvl: 2, text: "Atenção aos Mamilos: Estimule os mamilos do parceiro alternando lambidas circulares, sucção firme e sopros de ar quente.", time: 60 },
+      { lvl: 2, text: "Silêncio Forçado: Quem recebe os toques íntimos é proibido de gemer. Se emitir som, cumpre um castigo do parceiro.", time: 60 },
+      { lvl: 2, text: "Despir com os Dentes: Remova a calcinha ou cueca do outro utilizando somente os dentes e lábios, sem mãos.", time: 60 },
+      { lvl: 2, text: "Oral Tease: Comece o sexo oral, mas lamba apenas virilha, coxas e a base, sem tocar a ponta mais sensível.", time: 60 },
+      { lvl: 2, text: "Mãos Imobilizadas: Segure os pulsos do parceiro acima da cabeça dele(a) na cama enquanto beija seu peito e abdômen com força.", time: 60 },
+      { lvl: 2, text: "Contraste Térmico: Use a boca aquecida ou algo gelado para percorrer a virilha e a parte interna das coxas lentamente.", time: 60 },
+      { lvl: 2, text: "Sexo Oral Dedicado: Faça sexo oral contínuo e sem pressa no parceiro, focando no ritmo exato que ele(a) mais gosta.", time: 60 },
+      { lvl: 2, text: "Toque com Olhar Fixo: Masturbe o parceiro com as mãos enquanto ambos mantêm contato visual ininterrupto.", time: 60 },
+      { lvl: 2, text: "Dedos Lubrificados: Use lubrificante ou saliva para estimular com ritmo a intimidade do parceiro, de suave a firme.", time: 60 },
+      { lvl: 2, text: "Mordidas e Cabelo: Dê mordidas firmes no pescoço e nádegas combinadas com pegada forte no cabelo na nuca.", time: 60 },
+      { lvl: 2, text: "Fricção Direta Sem Entrada: Esfreguem as genitálias nuas diretamente com pressão e ritmo, mas com penetração proibida.", time: 60 },
+      { lvl: 2, text: "Deslize Corporal: Deslize o peito e o corpo suado sobre o corpo do outro com óleo de massagem ou lubrificante.", time: 60 },
+      { lvl: 2, text: "Edging Preliminar: Leve o parceiro com a boca ou mãos até a beirada de gozar e pare tudo no segundo exato.", time: 60 },
+      { lvl: 2, text: "Toque nas Nádegas: Espalhe lubrificante massageando as nádegas e a virilha com pressão firme e respiração colada.", time: 60 },
 
       // NÍVEL 3 (15)
-      { lvl: 3, text: "Posição de Concha (Spooning): Penetração deitados de lado por trás. Ritmo lento e profundo com mãos livres nos seios ou clitóris.", time: 180 },
-      { lvl: 3, text: "Ritmo Lento Proibido Acelerar: Posição clássica papai-e-mamãe profunda, com exata 1 investida a cada 3 segundos cronometrados.", time: 180 },
-      { lvl: 3, text: "Cowgirl Dominante: Thaís assume o topo no controle total, ditando profundidade, ritmo e fricção sem ajuda das mãos do Nicolau.", time: 180 },
-      { lvl: 3, text: "Perna no Ombro: Ela deitada de costas com uma perna apoiada no ombro dele, permitindo uma penetração profunda e direta no ponto G.", time: 180 },
-      { lvl: 3, text: "De Quatro Clássico: Penetração por trás estilo cachorrinho, com pegada firme nos quadris ou puxão de cabelo ritmado.", time: 180 },
-      { lvl: 3, text: "Posição da Borboleta: Ela com o quadril na borda da cama (apoiada em travesseiro) e ele penetrando de pé ou de joelhos.", time: 180 },
-      { lvl: 3, text: "Troca no Cronômetro: Comecem em uma posição e, ao bater 90 segundos, mudem imediatamente para outra sem parar o ritmo.", time: 180 },
-      { lvl: 3, text: "Cowgirl Invertida: Ela por cima de costas para ele, inclinando o tronco e controlando a intensidade das investidas.", time: 180 },
-      { lvl: 3, text: "Em Pé Apoiado: Ela apoiada na parede ou cômoda com ele penetrando em pé, com investidas firmes e pegada nas coxas.", time: 180 },
-      { lvl: 3, text: "Penetração + Estimulação: Penetração ritmada combinada obrigatoriamente com dedos estimulando o clitóris sem parar.", time: 180 },
-      { lvl: 3, text: "Papai-e-Mamãe Dobrada: Ela deita com os joelhos pressionados contra o próprio peito para uma penetração extremamente profunda.", time: 180 },
-      { lvl: 3, text: "Palmadas no Ritmo: Distribua palmadas firmes e sonoras nas nádegas a cada investida na penetração por trás.", time: 120 },
-      { lvl: 3, text: "Dirty Talk Explícito: Fale no ouvido durante a penetração tudo o que você está sentindo, usando palavras sem filtro.", time: 120 },
-      { lvl: 3, text: "Fricção Pélvica Travada: Encaixe completo sem sair de dentro; apenas rebolem e pressionem o osso pélvico contra o clitóris.", time: 120 },
-      { lvl: 3, text: "Aceleração Progressiva: 1º minuto bem lento, 2º minuto moderado e 3º minuto no ritmo mais rápido que aguentarem.", time: 180 },
+      { lvl: 3, text: "Posição de Concha (Spooning): Penetração deitados de lado por trás. Ritmo lento e profundo com mãos livres nos seios ou clitóris.", time: 60 },
+      { lvl: 3, text: "Ritmo Lento Proibido Acelerar: Posição clássica papai-e-mamãe profunda, com exata 1 investida a cada 3 segundos cronometrados.", time: 60 },
+      { lvl: 3, text: "Cowgirl Dominante: Thaís assume o topo no controle total, ditando profundidade, ritmo e fricção sem ajuda das mãos do Nicolau.", time: 60 },
+      { lvl: 3, text: "Perna no Ombro: Ela deitada de costas com uma perna apoiada no ombro dele, permitindo uma penetração profunda e direta no ponto G.", time: 60 },
+      { lvl: 3, text: "De Quatro Clássico: Penetração por trás estilo cachorrinho, com pegada firme nos quadris ou puxão de cabelo ritmado.", time: 60 },
+      { lvl: 3, text: "Posição da Borboleta: Ela com o quadril na borda da cama (apoiada em travesseiro) e ele penetrando de pé ou de joelhos.", time: 60 },
+      { lvl: 3, text: "Troca no Cronômetro: Comecem em uma posição e, ao bater a metade do tempo escolhido, mudem imediatamente de posição sem parar.", time: 60 },
+      { lvl: 3, text: "Cowgirl Invertida: Ela por cima de costas para ele, inclinando o tronco e controlando a intensidade das investidas.", time: 60 },
+      { lvl: 3, text: "Em Pé Apoiado: Ela apoiada na parede ou cômoda com ele penetrando em pé, com investidas firmes e pegada nas coxas.", time: 60 },
+      { lvl: 3, text: "Penetração + Estimulação: Penetração ritmada combinada obrigatoriamente com dedos estimulando o clitóris sem parar.", time: 60 },
+      { lvl: 3, text: "Papai-e-Mamãe Dobrada: Ela deita com os joelhos pressionados contra o próprio peito para uma penetração extremamente profunda.", time: 60 },
+      { lvl: 3, text: "Palmadas no Ritmo: Distribua palmadas firmes e sonoras nas nádegas a cada investida na penetração por trás.", time: 60 },
+      { lvl: 3, text: "Dirty Talk Explícito: Fale no ouvido durante a penetração tudo o que você está sentindo, usando palavras sem filtro.", time: 60 },
+      { lvl: 3, text: "Fricção Pélvica Travada: Encaixe completo sem sair de dentro; apenas rebolem e pressionem o osso pélvico contra o clitóris.", time: 60 },
+      { lvl: 3, text: "Aceleração Progressiva: Dividam o tempo escolhido em três partes: ritmo lento, ritmo moderado e ritmo máximo.", time: 60 },
 
-      // NÍVEL 4 (15 EXTREMOS)
-      { lvl: 4, text: "Oral Profundo Agressivo: Sexo oral profundo e sem pausas, com mão firme guiando a nuca e impondo o ritmo.", time: 180 },
-      { lvl: 4, text: "Edging Triplo Forçado: Leve o parceiro três vezes seguidas ao limiar de gozar e pare tudo na hora. Proibido gozar sem ordem.", time: 240 },
-      { lvl: 4, text: "Submissão Total Vendada: Um dos dois fica vendado e com as mãos presas ou contidas; o outro usa o corpo com controle absoluto.", time: 240 },
-      { lvl: 4, text: "De Quatro com Peito Colado: De quatro bem rebaixada, com o parceiro colando o peito nas costas e penetrando com força bruta.", time: 240 },
-      { lvl: 4, text: "Face Sitting / Comando: Ela senta direto no rosto dele controlando a pressão e o peso, ditando língua e sucção.", time: 180 },
-      { lvl: 4, text: "Spanking Pesado: Sequência de tapas fortes com a mão aberta nas nádegas e coxas antes e durante as estocadas.", time: 120 },
-      { lvl: 4, text: "Posição da Carriola Suspensa: Ela apoia as mãos na cama enquanto ele ergue as pernas dela no ar e penetra por trás no ritmo.", time: 120 },
-      { lvl: 4, text: "Ritmo Máximo Sem Parar: Penetração contínua na intensidade mais rápida e pesada possível pelos 3 minutos completos.", time: 180 },
-      { lvl: 4, text: "Exploração Anal Preliminar: Uso abundante de lubrificante para estimular o ânus com dedos ou língua durante o sexo.", time: 180 },
-      { lvl: 4, text: "Dupla Estimulação Direta: Penetração ativa somada à introdução de vibrador ou dedos no outro ponto ao mesmo tempo.", time: 180 },
-      { lvl: 4, text: "Dominação e Posse: Mão firme na garganta/mandíbula (sem asfixiar, apenas pressão de posse) e beijos vorazes forçados.", time: 120 },
-      { lvl: 4, text: "Pregador Aprofundado: Ela com as pernas cruzadas atrás da nuca dele enquanto ele desce o quadril com pressão total.", time: 240 },
-      { lvl: 4, text: "Fantasia Crua Narrada: Narre no ouvido a fantasia mais pesada ou proibida que tiver enquanto mete sem piedade.", time: 180 },
-      { lvl: 4, text: "Marcas Corporais: Deixe marcas de mordidas e sucções intensas nas coxas, ombros ou peito no auge da investida.", time: 120 },
-      { lvl: 4, text: "Permissão para Gozar: O parceiro só tem autorização de atingir o orgasmo se quem estiver no comando der a ordem verbal.", time: 240 }
+      // NÍVEL 4 (15)
+      { lvl: 4, text: "Oral Profundo Agressivo: Sexo oral profundo e sem pausas, com mão firme guiando a nuca e impondo o ritmo.", time: 60 },
+      { lvl: 4, text: "Edging Triplo Forçado: Leve o parceiro três vezes seguidas ao limiar de gozar e pare tudo na hora. Proibido gozar sem ordem.", time: 60 },
+      { lvl: 4, text: "Submissão Total Vendada: Um dos dois fica vendado e com as mãos presas ou contidas; o outro usa o corpo com controle absoluto.", time: 60 },
+      { lvl: 4, text: "De Quatro com Peito Colado: De quatro bem rebaixada, com o parceiro colando o peito nas costas e penetrando com força bruta.", time: 60 },
+      { lvl: 4, text: "Face Sitting / Comando: Ela senta direto no rosto dele controlando a pressão e o peso, ditando língua e sucção.", time: 60 },
+      { lvl: 4, text: "Spanking Pesado: Sequência de tapas fortes com a mão aberta nas nádegas e coxas antes e durante as estocadas.", time: 60 },
+      { lvl: 4, text: "Posição da Carriola Suspensa: Ela apoia as mãos na cama enquanto ele ergue as pernas dela no ar e penetra por trás no ritmo.", time: 60 },
+      { lvl: 4, text: "Ritmo Máximo Sem Parar: Penetração contínua na intensidade mais rápida e pesada possível pelo tempo selecionado.", time: 60 },
+      { lvl: 4, text: "Exploração Anal Preliminar: Uso abundante de lubrificante para estimular o ânus com dedos ou língua durante o sexo.", time: 60 },
+      { lvl: 4, text: "Dupla Estimulação Direta: Penetração ativa somada à introdução de vibrador ou dedos no outro ponto ao mesmo tempo.", time: 60 },
+      { lvl: 4, text: "Dominação e Posse: Mão firme na garganta/mandíbula (sem asfixiar, apenas pressão de posse) e beijos vorazes forçados.", time: 60 },
+      { lvl: 4, text: "Pregador Aprofundado: Ela com as pernas cruzadas atrás da nuca dele enquanto ele desce o quadril com pressão total.", time: 60 },
+      { lvl: 4, text: "Fantasia Crua Narrada: Narre no ouvido a fantasia mais pesada ou proibida que tiver enquanto mete sem piedade.", time: 60 },
+      { lvl: 4, text: "Marcas Corporais: Deixe marcas de mordidas e sucções intensas nas coxas, ombros ou peito no auge da investida.", time: 60 },
+      { lvl: 4, text: "Permissão para Gozar: O parceiro só tem autorização de atingir o orgasmo se quem estiver no comando der a ordem verbal.", time: 60 }
     ];
 
     let customChallenges = JSON.parse(localStorage.getItem('casal_custom_challenges') || '[]');
@@ -757,12 +819,14 @@
     let isLevel4Unlocked = false;
     let currentPlayerMode = 'Nicolau';
     let lastAutoPlayer = 'Nicolau';
+    let currentActiveTarget = 'Nicolau';
 
-    // 2 Pulos para cada um por padrão
+    // 2 Pulos para cada um
     let skips = { Nicolau: 2, Thais: 2 };
 
     let timerInterval = null;
-    let timerSeconds = 0;
+    let timerSeconds = 60;
+    let selectedDuration = 60;
 
     function updateCustomCount() {
       document.getElementById('custom-count').innerText = `${customChallenges.length} criados`;
@@ -812,6 +876,7 @@
       document.querySelectorAll('.player-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.player === p);
       });
+      updateTimePickerHeader();
     }
 
     function setLevel(lvl) {
@@ -838,6 +903,22 @@
       return currentPlayerMode === 'Nicolau' ? 'Nicolau' : 'Thaís';
     }
 
+    function updateTimePickerHeader() {
+      const activeExecuter = currentActiveTarget || (currentPlayerMode === 'Nicolau' ? 'Nicolau' : 'Thaís');
+      // Quem recebe é a outra pessoa
+      const receiver = (activeExecuter === 'Nicolau') ? 'Thaís' : 'Nicolau';
+      document.getElementById('time-picker-name').innerText = `${receiver} decide o tempo`;
+    }
+
+    function selectTime(sec) {
+      selectedDuration = sec;
+      document.querySelectorAll('.time-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText === `${sec}s`);
+      });
+      setTimerSeconds(sec);
+      beep(650, 0.1);
+    }
+
     function drawCard() {
       if (navigator.vibrate) navigator.vibrate(40);
       beep(550, 0.1);
@@ -853,7 +934,7 @@
       if (pool.length === 0) pool = defaultChallenges.filter(c => c.lvl == 1);
 
       const item = pool[Math.floor(Math.random() * pool.length)];
-      const targetPlayer = item.target || getActivePlayerName();
+      currentActiveTarget = item.target || getActivePlayerName();
 
       const card = document.getElementById('card');
       card.style.transform = 'scale(0.96)';
@@ -869,10 +950,13 @@
       };
       badge.innerText = lvlNames[item.lvl] || `Nível ${item.lvl}`;
 
-      document.getElementById('card-target').innerText = `Vez de: ${targetPlayer}`;
+      document.getElementById('card-target').innerText = `Quem faz: ${currentActiveTarget}`;
       document.getElementById('card-text').innerText = item.text;
 
-      setTimerSeconds(item.time || 60);
+      updateTimePickerHeader();
+
+      // Aplica o tempo atualmente ativo nos seletores
+      setTimerSeconds(selectedDuration);
     }
 
     function useSkip() {
@@ -922,7 +1006,7 @@
 
     function resetTimer() {
       pauseTimer();
-      timerSeconds = 0;
+      timerSeconds = selectedDuration;
       updateTimerDisplay();
     }
 
@@ -953,10 +1037,10 @@
       document.getElementById('custom-text').value = '';
       document.getElementById('custom-sec').value = '';
       beep(700, 0.15);
-      alert(`Desafio salvo no Nível ${lvl} com ${sec} segundos!`);
+      alert(`Desafio salvo no Nível ${lvl}!`);
     }
 
-    // Modal de Visualização da Lista Completa
+    // Modal
     let currentModalFilter = 'all';
 
     function openChallengesModal() {
@@ -995,7 +1079,7 @@
         return;
       }
 
-      list.forEach((item, index) => {
+      list.forEach((item) => {
         const div = document.createElement('div');
         div.className = 'list-item';
 
@@ -1012,13 +1096,17 @@
         div.innerHTML = `
           <div class="list-item-header">
             <span class="list-item-lvl">${lvlNames[item.lvl] || 'Nível ' + item.lvl}${customBadge}${targetInfo}</span>
-            <span class="list-item-time">⏱️ ${item.time}s</span>
+            <span class="list-item-time">⏱️ 30s a 180s</span>
           </div>
           <div class="list-item-text">${item.text}</div>
         `;
         container.appendChild(div);
       });
     }
+
+    // Inicialização da interface
+    updateTimePickerHeader();
+    updateTimerDisplay();
   </script>
 </body>
 </html>
