@@ -69,7 +69,7 @@
       gap: 12px;
     }
 
-    /* Seletor de Vez */
+    /* Seletor de Modo: Alternado ou Aleatório */
     .player-select {
       display: flex;
       background: var(--card-bg);
@@ -81,8 +81,8 @@
 
     .player-btn {
       flex: 1;
-      padding: 8px 4px;
-      font-size: 0.82rem;
+      padding: 10px 4px;
+      font-size: 0.85rem;
       font-weight: 700;
       background: transparent;
       border: none;
@@ -218,8 +218,8 @@
     .badge-l4 { background: rgba(220, 38, 38, 0.25); color: var(--level4); border: 1px solid var(--level4); }
 
     .card-target {
-      font-size: 0.85rem;
-      font-weight: 700;
+      font-size: 0.95rem;
+      font-weight: 800;
       color: var(--accent);
       margin-bottom: 6px;
     }
@@ -580,16 +580,15 @@
 
   <header>
     <h1>Nicolau & Thaís</h1>
-    <div class="subtitle">Intensidade a Dois • Controle de Tempo</div>
+    <div class="subtitle">Intensidade a Dois • Desafios Cronometrados</div>
   </header>
 
   <div class="container">
 
-    <!-- Seletor de Vez -->
+    <!-- Seletor Apenas: Alternado ou Aleatório -->
     <div class="player-select">
-      <button class="player-btn active" data-player="Nicolau" onclick="setPlayer('Nicolau')">Vez do Nicolau</button>
-      <button class="player-btn" data-player="Thais" onclick="setPlayer('Thais')">Vez da Thaís</button>
-      <button class="player-btn" data-player="Auto" onclick="setPlayer('Auto')">Alternar 🔄</button>
+      <button class="player-btn active" data-mode="Alternado" onclick="setMode('Alternado')">Modo Alternado 🔄</button>
+      <button class="player-btn" data-mode="Aleatorio" onclick="setMode('Aleatorio')">Modo Aleatório 🎲</button>
     </div>
 
     <!-- Trava do Nível 4 -->
@@ -620,23 +619,23 @@
       </button>
     </div>
 
-    <!-- Carta -->
+    <!-- Carta Principal -->
     <div class="card-scene">
       <div class="card" id="card" onclick="drawCard()">
         <div class="card-face">
           <div class="card-badge badge-l1" id="card-badge">Pronto para começar</div>
-          <div class="card-target" id="card-target">Quem vai fazer?</div>
-          <div class="card-text" id="card-text">Toque nesta carta ou clique no botão abaixo para sortear o primeiro desafio.</div>
+          <div class="card-target" id="card-target">Toque para sortear</div>
+          <div class="card-text" id="card-text">Clique em "Sortear Desafio" ou toque diretamente nesta carta para iniciar.</div>
           <div class="card-hint">✨ Toque para sortear</div>
         </div>
       </div>
     </div>
 
-    <!-- Seletor Rápido de Tempo (Quem Recebe Escolhe) -->
+    <!-- Seletor Rápido de Duração -->
     <div class="time-selector-panel">
       <div class="time-selector-header">
         <span>Quem recebe a ação escolhe o tempo:</span>
-        <strong id="time-picker-name">Thaís decide</strong>
+        <strong id="time-picker-name">Parceiro decide</strong>
       </div>
       <div class="time-options">
         <button class="time-btn" onclick="selectTime(30)">30s</button>
@@ -648,7 +647,7 @@
       </div>
     </div>
 
-    <!-- Ações (2 Pulos por jogador) -->
+    <!-- Ações (2 Pulos para cada) -->
     <div class="actions">
       <button class="btn-draw" onclick="drawCard()">
         <span>🎲</span> Sortear Desafio
@@ -817,8 +816,10 @@
     let customChallenges = JSON.parse(localStorage.getItem('casal_custom_challenges') || '[]');
     let currentLevel = 1;
     let isLevel4Unlocked = false;
-    let currentPlayerMode = 'Nicolau';
-    let lastAutoPlayer = 'Nicolau';
+
+    // Modos: 'Alternado' ou 'Aleatorio'
+    let currentMode = 'Alternado';
+    let lastTurnPlayer = 'Nicolau';
     let currentActiveTarget = 'Nicolau';
 
     // 2 Pulos para cada um
@@ -842,6 +843,14 @@
       updateSkipLabel();
       beep(600, 0.1);
       alert('Pulos renovados! 2 para o Nicolau e 2 para a Thaís.');
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.player-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+      beep(500, 0.1);
     }
 
     function toggleLevel4() {
@@ -871,14 +880,6 @@
       }
     }
 
-    function setPlayer(p) {
-      currentPlayerMode = p;
-      document.querySelectorAll('.player-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.player === p);
-      });
-      updateTimePickerHeader();
-    }
-
     function setLevel(lvl) {
       if (lvl === 4 && !isLevel4Unlocked) {
         const confirmUnlock = confirm("O Nível 4 contém desafios extremos e pesados (BDSM leve, sexo oral agressivo, dominação). Vocês dois desejam liberar agora?");
@@ -895,18 +896,21 @@
       });
     }
 
-    function getActivePlayerName() {
-      if (currentPlayerMode === 'Auto') {
-        lastAutoPlayer = (lastAutoPlayer === 'Nicolau') ? 'Thaís' : 'Nicolau';
-        return lastAutoPlayer;
+    function determinePlayer() {
+      if (currentMode === 'Alternado') {
+        lastTurnPlayer = (lastTurnPlayer === 'Nicolau') ? 'Thaís' : 'Nicolau';
+        return lastTurnPlayer;
+      } else {
+        // Modo Aleatório: 50% de chance para cada um
+        const randomPlayer = Math.random() < 0.5 ? 'Nicolau' : 'Thaís';
+        lastTurnPlayer = randomPlayer;
+        return randomPlayer;
       }
-      return currentPlayerMode === 'Nicolau' ? 'Nicolau' : 'Thaís';
     }
 
     function updateTimePickerHeader() {
-      const activeExecuter = currentActiveTarget || (currentPlayerMode === 'Nicolau' ? 'Nicolau' : 'Thaís');
-      // Quem recebe é a outra pessoa
-      const receiver = (activeExecuter === 'Nicolau') ? 'Thaís' : 'Nicolau';
+      const executer = currentActiveTarget || 'Nicolau';
+      const receiver = (executer === 'Nicolau') ? 'Thaís' : 'Nicolau';
       document.getElementById('time-picker-name').innerText = `${receiver} decide o tempo`;
     }
 
@@ -934,7 +938,7 @@
       if (pool.length === 0) pool = defaultChallenges.filter(c => c.lvl == 1);
 
       const item = pool[Math.floor(Math.random() * pool.length)];
-      currentActiveTarget = item.target || getActivePlayerName();
+      currentActiveTarget = item.target || determinePlayer();
 
       const card = document.getElementById('card');
       card.style.transform = 'scale(0.96)';
@@ -950,18 +954,16 @@
       };
       badge.innerText = lvlNames[item.lvl] || `Nível ${item.lvl}`;
 
-      document.getElementById('card-target').innerText = `Quem faz: ${currentActiveTarget}`;
+      document.getElementById('card-target').innerText = `Vez de: ${currentActiveTarget}`;
       document.getElementById('card-text').innerText = item.text;
 
       updateTimePickerHeader();
-
-      // Aplica o tempo atualmente ativo nos seletores
       setTimerSeconds(selectedDuration);
     }
 
     function useSkip() {
-      const active = (currentPlayerMode === 'Auto') ? lastAutoPlayer : (currentPlayerMode === 'Nicolau' ? 'Nicolau' : 'Thais');
-      const key = active === 'Nicolau' ? 'Nicolau' : 'Thais';
+      const active = currentActiveTarget;
+      const key = (active === 'Nicolau') ? 'Nicolau' : 'Thais';
 
       if (skips[key] > 0) {
         skips[key]--;
@@ -1104,7 +1106,6 @@
       });
     }
 
-    // Inicialização da interface
     updateTimePickerHeader();
     updateTimerDisplay();
   </script>
