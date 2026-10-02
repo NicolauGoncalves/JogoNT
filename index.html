@@ -69,7 +69,7 @@
       gap: 12px;
     }
 
-    /* Seletor de Modo: Alternado ou Aleatório */
+    /* Modos de Sorteio */
     .player-select {
       display: flex;
       background: var(--card-bg);
@@ -170,7 +170,7 @@
       border-style: dashed;
     }
 
-    /* Carta */
+    /* Carta Principal */
     .card-scene {
       perspective: 1000px;
       width: 100%;
@@ -237,7 +237,7 @@
       margin-top: 10px;
     }
 
-    /* Seletor de Tempo de Quem Recebe */
+    /* Seletor Rápido de Duração */
     .time-selector-panel {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -378,7 +378,7 @@
       cursor: pointer;
     }
 
-    /* Botão Ver Lista Completa */
+    /* Botão Ver Lista */
     .btn-view-list {
       width: 100%;
       background: #1e0915;
@@ -585,7 +585,7 @@
 
   <div class="container">
 
-    <!-- Seletor Apenas: Alternado ou Aleatório -->
+    <!-- Modo de Jogo -->
     <div class="player-select">
       <button class="player-btn active" data-mode="Alternado" onclick="setMode('Alternado')">Modo Alternado 🔄</button>
       <button class="player-btn" data-mode="Aleatorio" onclick="setMode('Aleatorio')">Modo Aleatório 🎲</button>
@@ -744,7 +744,7 @@
     }
 
     const defaultChallenges = [
-      // NÍVEL 1 (15)
+      // NÍVEL 1 (15 DESAFIOS)
       { lvl: 1, text: "Olhar Fixo: Fiquem frente a frente nus ou de lingerie, olhando nos olhos sem rir nem desviar. Quem desviar cumpre um castigo escolhido pelo outro.", time: 60 },
       { lvl: 1, text: "Massagem Firme: Massageie ombros, nuca e pescoço do outro com as pontas dos dedos e a respiração colada no ouvido.", time: 60 },
       { lvl: 1, text: "Confissão Íntima: Conte baixinho no ouvido do parceiro qual fantasia recente com ele(a) te deixou com mais tesão.", time: 60 },
@@ -761,7 +761,7 @@
       { lvl: 1, text: "Carícia com Tecido: Passe uma peça de roupa suave ou tecido deslizando pelo peito, mamilos e abdômen do outro.", time: 60 },
       { lvl: 1, text: "Beijo Prolongado: Um beijo de língua lento, voraz e profundo sem interrupção e sem tirar as mãos do corpo do outro.", time: 60 },
 
-      // NÍVEL 2 (15)
+      // NÍVEL 2 (15 DESAFIOS)
       { lvl: 2, text: "Regra dos Segundos: Beije, chupe e lamba pescoço, seios/peitoral e virilha, mas a boca está estritamente proibida.", time: 60 },
       { lvl: 2, text: "Atenção aos Mamilos: Estimule os mamilos do parceiro alternando lambidas circulares, sucção firme e sopros de ar quente.", time: 60 },
       { lvl: 2, text: "Silêncio Forçado: Quem recebe os toques íntimos é proibido de gemer. Se emitir som, cumpre um castigo do parceiro.", time: 60 },
@@ -778,7 +778,7 @@
       { lvl: 2, text: "Edging Preliminar: Leve o parceiro com a boca ou mãos até a beirada de gozar e pare tudo no segundo exato.", time: 60 },
       { lvl: 2, text: "Toque nas Nádegas: Espalhe lubrificante massageando as nádegas e a virilha com pressão firme e respiração colada.", time: 60 },
 
-      // NÍVEL 3 (15)
+      // NÍVEL 3 (15 DESAFIOS COM POSIÇÕES ESPECÍFICAS)
       { lvl: 3, text: "Posição de Concha (Spooning): Penetração deitados de lado por trás. Ritmo lento e profundo com mãos livres nos seios ou clitóris.", time: 60 },
       { lvl: 3, text: "Ritmo Lento Proibido Acelerar: Posição clássica papai-e-mamãe profunda, com exata 1 investida a cada 3 segundos cronometrados.", time: 60 },
       { lvl: 3, text: "Cowgirl Dominante: Thaís assume o topo no controle total, ditando profundidade, ritmo e fricção sem ajuda das mãos do Nicolau.", time: 60 },
@@ -795,34 +795,33 @@
       { lvl: 3, text: "Fricção Pélvica Travada: Encaixe completo sem sair de dentro; apenas rebolem e pressionem o osso pélvico contra o clitóris.", time: 60 },
       { lvl: 3, text: "Aceleração Progressiva: Dividam o tempo escolhido em três partes: ritmo lento, ritmo moderado e ritmo máximo.", time: 60 },
 
-      // NÍVEL 4 (15)
-      { lvl: 4, text: "Oral Profundo Agressivo: Sexo oral profundo e sem pausas, com mão firme guiando a nuca e impondo o ritmo.", time: 60 },
-      { lvl: 4, text: "Edging Triplo Forçado: Leve o parceiro três vezes seguidas ao limiar de gozar e pare tudo na hora. Proibido gozar sem ordem.", time: 60 },
-      { lvl: 4, text: "Submissão Total Vendada: Um dos dois fica vendado e com as mãos presas ou contidas; o outro usa o corpo com controle absoluto.", time: 60 },
-      { lvl: 4, text: "De Quatro com Peito Colado: De quatro bem rebaixada, com o parceiro colando o peito nas costas e penetrando com força bruta.", time: 60 },
-      { lvl: 4, text: "Face Sitting / Comando: Ela senta direto no rosto dele controlando a pressão e o peso, ditando língua e sucção.", time: 60 },
-      { lvl: 4, text: "Spanking Pesado: Sequência de tapas fortes com a mão aberta nas nádegas e coxas antes e durante as estocadas.", time: 60 },
-      { lvl: 4, text: "Posição da Carriola Suspensa: Ela apoia as mãos na cama enquanto ele ergue as pernas dela no ar e penetra por trás no ritmo.", time: 60 },
-      { lvl: 4, text: "Ritmo Máximo Sem Parar: Penetração contínua na intensidade mais rápida e pesada possível pelo tempo selecionado.", time: 60 },
-      { lvl: 4, text: "Exploração Anal Preliminar: Uso abundante de lubrificante para estimular o ânus com dedos ou língua durante o sexo.", time: 60 },
-      { lvl: 4, text: "Dupla Estimulação Direta: Penetração ativa somada à introdução de vibrador ou dedos no outro ponto ao mesmo tempo.", time: 60 },
-      { lvl: 4, text: "Dominação e Posse: Mão firme na garganta/mandíbula (sem asfixiar, apenas pressão de posse) e beijos vorazes forçados.", time: 60 },
-      { lvl: 4, text: "Pregador Aprofundado: Ela com as pernas cruzadas atrás da nuca dele enquanto ele desce o quadril com pressão total.", time: 60 },
-      { lvl: 4, text: "Fantasia Crua Narrada: Narre no ouvido a fantasia mais pesada ou proibida que tiver enquanto mete sem piedade.", time: 60 },
-      { lvl: 4, text: "Marcas Corporais: Deixe marcas de mordidas e sucções intensas nas coxas, ombros ou peito no auge da investida.", time: 60 },
-      { lvl: 4, text: "Permissão para Gozar: O parceiro só tem autorização de atingir o orgasmo se quem estiver no comando der a ordem verbal.", time: 60 }
+      // NÍVEL 4 (16 DESAFIOS EXTREMOS E PERSONALIZADOS)
+      { lvl: 4, text: "Explosão de 15 Segundos: Escolham uma posição e mantenham a penetração na velocidade e força mais brutas possíveis por exatos 15 segundos sem parar.", time: 15 },
+      { lvl: 4, text: "Cachorrinho com Toque Duplo: Thaís fica de quatro tradicional; Nicolau penetra por trás enquanto introduz levemente a ponta dos dedos lubrificados no ânus dela.", time: 60 },
+      { lvl: 4, text: "Palmadas Sonoras: Nicolau distribui palmadas firmes e ritmadas nas nádegas da Thaís a cada investida na penetração por trás, mantendo a pele quente até o fim do tempo.", time: 60 },
+      { lvl: 4, text: "Pernas no Ar: Thaís deitada na cama com as pernas erguidas e seguradas pelo Nicolau, enquanto ele penetra firme com pegada nas coxas.", time: 60 },
+      { lvl: 4, text: "Abraço com Coxas Fechadas: Thaís deita de costas com as pernas bem juntas e esticadas; Nicolau penetra por cima com as pernas por fora, deixando o canal muito mais apertado.", time: 60 },
+      { lvl: 4, text: "Face Sitting Dominante: Thaís senta diretamente no rosto do Nicolau, controlando a pressão e o peso, ditando o ritmo da língua e da sucção.", time: 60 },
+      { lvl: 4, text: "Oral Profundo no Nicolau: Thaís faz sexo oral contínuo e intenso no Nicolau, com ele segurando firme na nuca ou cabelo para guiar a profundidade e a cadência.", time: 60 },
+      { lvl: 4, text: "Oral Voraz na Thaís: Nicolau faz sexo oral dedicado e firme na Thaís, usando língua e sucção com pegada forte nas coxas dela sem diminuir o ritmo.", time: 60 },
+      { lvl: 4, text: "Submissão Cega da Thaís: Thaís fica vendada e com as mãos seguradas na cama; Nicolau assume o controle absoluto do ritmo e das estocadas.", time: 60 },
+      { lvl: 4, text: "Submissão Cega do Nicolau: Nicolau fica vendado e com as mãos presas; Thaís assume o topo ou dita as carícias e o ritmo sem ele poder se mover.", time: 60 },
+      { lvl: 4, text: "Dupla Estimulação Simultânea: Penetração ativa do Nicolau enquanto dedos ou vibrador estimulam diretamente o clitóris da Thaís ao mesmo tempo.", time: 60 },
+      { lvl: 4, text: "Dirty Talk Sem Pudor: Durante a penetração, falem no ouvido um do outro frases explícitas, palavras pesadas e sem nenhum tipo de filtro.", time: 60 },
+      { lvl: 4, text: "Posse e Beijo Voraz: Nicolau segura com firmeza a nuca ou a mandíbula da Thaís durante o ato, puxando para beijos vorazes, mordidas no lábio e contato olho no olho.", time: 60 },
+      { lvl: 4, text: "Invasão Dupla Manual: Durante a masturbação com bastante lubrificante, Nicolau introduz dedos na vagina e no ânus da Thaís simultaneamente.", time: 60 },
+      { lvl: 4, text: "Clímax Controlado da Thaís: Thaís fica terminantemente proibida de gozar, mesmo no ápice máximo, até que o Nicolau dê a autorização verbal clara.", time: 60 },
+      { lvl: 4, text: "Clímax Controlado do Nicolau: Nicolau é proibido de gozar, sendo obrigado a desacelerar ou travar o quadril, até que a Thaís dê a ordem permitindo.", time: 60 }
     ];
 
     let customChallenges = JSON.parse(localStorage.getItem('casal_custom_challenges') || '[]');
     let currentLevel = 1;
     let isLevel4Unlocked = false;
 
-    // Modos: 'Alternado' ou 'Aleatorio'
     let currentMode = 'Alternado';
     let lastTurnPlayer = 'Nicolau';
     let currentActiveTarget = 'Nicolau';
 
-    // 2 Pulos para cada um
     let skips = { Nicolau: 2, Thais: 2 };
 
     let timerInterval = null;
@@ -901,7 +900,6 @@
         lastTurnPlayer = (lastTurnPlayer === 'Nicolau') ? 'Thaís' : 'Nicolau';
         return lastTurnPlayer;
       } else {
-        // Modo Aleatório: 50% de chance para cada um
         const randomPlayer = Math.random() < 0.5 ? 'Nicolau' : 'Thaís';
         lastTurnPlayer = randomPlayer;
         return randomPlayer;
@@ -958,7 +956,13 @@
       document.getElementById('card-text').innerText = item.text;
 
       updateTimePickerHeader();
-      setTimerSeconds(selectedDuration);
+
+      // Desafio com tempo estrito travado (ex: os 15s) respeita o item.time
+      if (item.time && item.time === 15) {
+        setTimerSeconds(15);
+      } else {
+        setTimerSeconds(selectedDuration);
+      }
     }
 
     function useSkip() {
@@ -1042,7 +1046,7 @@
       alert(`Desafio salvo no Nível ${lvl}!`);
     }
 
-    // Modal
+    // Modal Catálogo
     let currentModalFilter = 'all';
 
     function openChallengesModal() {
@@ -1094,11 +1098,12 @@
 
         const targetInfo = item.target ? ` (${item.target})` : '';
         const customBadge = item.isCustom ? ' [Criado]' : '';
+        const timeDisplay = (item.time === 15) ? '⏱️ 15s fixo' : '⏱️ 30s a 180s';
 
         div.innerHTML = `
           <div class="list-item-header">
             <span class="list-item-lvl">${lvlNames[item.lvl] || 'Nível ' + item.lvl}${customBadge}${targetInfo}</span>
-            <span class="list-item-time">⏱️ 30s a 180s</span>
+            <span class="list-item-time">${timeDisplay}</span>
           </div>
           <div class="list-item-text">${item.text}</div>
         `;
