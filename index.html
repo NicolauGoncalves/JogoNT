@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Nicolau & Thaís: Intensidade a Dois</title>
+  <style>
+    :root {
+      --bg: #090206;
+      --card-bg: #150610;
+      --card-border: #380f26;
+      --primary: #e62e6b;
+      --primary-glow: rgba(230, 46, 107, 0.45);
+      --accent: #ffd166;
+      --text: #fbebf2;
+      --text-muted: #a6798e;
+      --level1: #3b82f6;
+      --level2: #a855f7;
+      --level3: #f97316;
+      --level4: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 12px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    h1 {
+      font-size: 1.55rem;
+      font-weight: 800;
+      background: linear-gradient(45deg, #ff4b72, #e62e6b, #ffb703);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Seletor de Vez */
+    .player-select {
+      display: flex;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .player-btn {
+      flex: 1;
+      padding: 8px 4px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .player-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    /* Trava do Nível 4 */
+    .lvl4-toggle-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1a050e;
+      border: 1px solid #4a1228;
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+    }
+
+    .lvl4-toggle-label {
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .switch-btn {
+      background: #2b0b18;
+      border: 1px solid #751a3a;
+      color: #ff9ebb;
+      font-size: 0.72rem;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .switch-btn.active {
+      background: var(--level4);
+      color: #fff;
+      border-color: #ff5252;
+    }
+
+    /* Abas dos Níveis */
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+
+    .tab-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      border-radius: 10px;
+      padding: 7px 2px;
+      font-size: 0.72rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn span { font-size: 1rem; }
+
+    .tab-btn.active[data-lvl="1"] { border-color: var(--level1); color: var(--level1); }
+    .tab-btn.active[data-lvl="2"] { border-color: var(--level2); color: var(--level2); }
+    .tab-btn.active[data-lvl="3"] { border-color: var(--level3); color: var(--level3); }
+    .tab-btn.active[data-lvl="4"] { border-color: var(--level4); color: var(--level4); background: rgba(220, 38, 38, 0.15); box-shadow: 0 0 8px rgba(220, 38, 38, 0.4); }
+    .tab-btn.active[data-lvl="all"] { border-color: var(--accent); color: var(--accent); }
+
+    .tab-btn.locked {
+      opacity: 0.6;
+      border-style: dashed;
+    }
+
+    /* Carta */
+    .card-scene {
+      perspective: 1000px;
+      width: 100%;
+      min-height: 250px;
+      margin: 2px 0;
+    }
+
+    .card {
+      width: 100%;
+      min-height: 250px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .card-face {
+      width: 100%;
+      min-height: 250px;
+      border-radius: 18px;
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(145deg, #1c0816, #0e020a);
+      border: 1.5px solid var(--card-border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .card-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-l1 { background: rgba(59, 130, 246, 0.2); color: var(--level1); }
+    .badge-l2 { background: rgba(168, 85, 247, 0.2); color: var(--level2); }
+    .badge-l3 { background: rgba(249, 115, 22, 0.2); color: var(--level3); }
+    .badge-l4 { background: rgba(220, 38, 38, 0.25); color: var(--level4); border: 1px solid var(--level4); }
+
+    .card-target {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .card-text {
+      font-size: 1.05rem;
+      line-height: 1.45;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .card-hint {
+      font-size: 0.75rem;
+      color: #6d3a54;
+      margin-top: 10px;
+    }
+
+    /* Ações */
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-draw {
+      flex: 2;
+      background: linear-gradient(45deg, #e62e6b, #b71540);
+      color: #fff;
+      border: none;
+      padding: 14px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px var(--primary-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-draw:active { transform: scale(0.98); }
+
+    .btn-skip {
+      flex: 1.1;
+      background: #200a18;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      border-radius: 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      position: relative;
+    }
+
+    .skip-counts {
+      font-size: 0.72rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .reset-skips-btn {
+      font-size: 0.65rem;
+      color: #7d3f5d;
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      margin-top: 2px;
+    }
+
+    /* Cronômetro */
+    .timer-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .timer-time {
+      font-size: 1.4rem;
+      font-family: monospace;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .timer-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .timer-btn {
+      background: #2b1122;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Botão Ver Lista Completa */
+    .btn-view-list {
+      width: 100%;
+      background: #1e0915;
+      border: 1px solid #4a1937;
+      color: #f7a8ca;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-view-list:active { background: #2f0f23; }
+
+    /* Criador de Ideias */
+    .creator-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 4px;
+    }
+
+    .creator-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #ff758c;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .custom-count {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+
+    .input-field {
+      width: 100%;
+      background: #0d0208;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 9px;
+      color: #fff;
+      font-size: 0.88rem;
+      margin-bottom: 8px;
+      outline: none;
+    }
+
+    .input-field:focus { border-color: var(--primary); }
+
+    .creator-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .select-field {
+      flex: 1;
+      background: #0d0208;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 8px;
+      color: #fff;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .btn-add {
+      width: 100%;
+      background: #381229;
+      border: 1px solid #7d2657;
+      color: #ffd166;
+      padding: 9px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Modal com Lista Completa */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(5px);
+      z-index: 999;
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-content {
+      width: 100%;
+      max-width: 500px;
+      height: 88vh;
+      background: #13040e;
+      border-top: 2px solid #571638;
+      border-radius: 20px 20px 0 0;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #2d0e20;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ff9ebb;
+    }
+
+    .modal-close {
+      background: #250b1a;
+      border: 1px solid #4a1634;
+      color: #fff;
+      font-size: 1.1rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-filter-tabs {
+      display: flex;
+      gap: 6px;
+      padding: 10px 0;
+      overflow-x: auto;
+    }
+
+    .modal-tab {
+      background: #200816;
+      border: 1px solid #3d122b;
+      color: var(--text-muted);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .modal-tab.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .modal-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 8px 0;
+    }
+
+    .list-item {
+      background: #1b0714;
+      border: 1px solid #360f25;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .list-item-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .list-item-lvl { color: #ff758c; }
+    .list-item-time { color: var(--accent); }
+    .list-item-text { font-size: 0.88rem; line-height: 1.35; color: #fbebf2; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Nicolau & Thaís</h1>
+    <div class="subtitle">Intensidade a Dois • 60 Desafios</div>
+  </header>
+
+  <div class="container">
+
+    <!-- Seletor de Vez -->
+    <div class="player-select">
+      <button class="player-btn active" data-player="Nicolau" onclick="setPlayer('Nicolau')">Vez do Nicolau</button>
+      <button class="player-btn" data-player="Thais" onclick="setPlayer('Thais')">Vez da Thaís</button>
+      <button class="player-btn" data-player="Auto" onclick="setPlayer('Auto')">Alternar 🔄</button>
+    </div>
+
+    <!-- Trava do Nível 4 -->
+    <div class="lvl4-toggle-box">
+      <div class="lvl4-toggle-label">
+        <span>⚠️ Modo Extremo (Nível 4):</span>
+        <strong id="lvl4-status-text" style="color: #888;">Desativado</strong>
+      </div>
+      <button class="switch-btn" id="lvl4-toggle-btn" onclick="toggleLevel4()">Ativar Nível 4</button>
+    </div>
+
+    <!-- Abas dos Níveis -->
+    <div class="tabs">
+      <button class="tab-btn active" data-lvl="1" onclick="setLevel(1)">
+        <span>🔥</span> Nível 1
+      </button>
+      <button class="tab-btn" data-lvl="2" onclick="setLevel(2)">
+        <span>⚡</span> Nível 2
+      </button>
+      <button class="tab-btn" data-lvl="3" onclick="setLevel(3)">
+        <span>💋</span> Nível 3
+      </button>
+      <button class="tab-btn locked" data-lvl="4" id="tab-lvl4" onclick="setLevel(4)">
+        <span id="tab-lvl4-icon">🔒</span> Nível 4
+      </button>
+      <button class="tab-btn" data-lvl="all" onclick="setLevel('all')">
+        <span>🎲</span> Misto
+      </button>
+    </div>
+
+    <!-- Carta -->
+    <div class="card-scene">
+      <div class="card" id="card" onclick="drawCard()">
+        <div class="card-face">
+          <div class="card-badge badge-l1" id="card-badge">Pronto para começar</div>
+          <div class="card-target" id="card-target">Quem vai fazer?</div>
+          <div class="card-text" id="card-text">Toque nesta carta ou clique no botão abaixo para sortear o primeiro desafio.</div>
+          <div class="card-hint">✨ Toque para sortear</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações (com 2 Pulos por jogador) -->
+    <div class="actions">
+      <button class="btn-draw" onclick="drawCard()">
+        <span>🎲</span> Sortear Desafio
+      </button>
+      <div class="btn-skip" onclick="useSkip()">
+        <span>⏭️ Pular</span>
+        <div class="skip-counts" id="skip-label">N: 2 | T: 2</div>
+        <button class="reset-skips-btn" onclick="event.stopPropagation(); resetSkips();">renovar</button>
+      </div>
+    </div>
+
+    <!-- Cronômetro -->
+    <div class="timer-panel">
+      <div>
+        <div style="font-size:0.75rem; color:var(--text-muted);">TEMPO DO DESAFIO</div>
+        <div class="timer-time" id="timer-display">00:00</div>
+      </div>
+      <div class="timer-controls">
+        <button class="timer-btn" onclick="startTimer()">Iniciar</button>
+        <button class="timer-btn" onclick="pauseTimer()">Pausar</button>
+        <button class="timer-btn" onclick="resetTimer()">Zerar</button>
+      </div>
+    </div>
+
+    <!-- Botão Lista Completa -->
+    <button class="btn-view-list" onclick="openChallengesModal()">
+      <span>📜</span> Ver Lista Completa de Desafios
+    </button>
+
+    <!-- Criação de Desafios -->
+    <div class="creator-box">
+      <div class="creator-title">
+        <span>+ Adicionar Desafio Próprio</span>
+        <span class="custom-count" id="custom-count">0 criados</span>
+      </div>
+      <input type="text" id="custom-text" class="input-field" placeholder="Escreva o desafio aqui..." />
+      <div class="creator-row">
+        <select id="custom-level" class="select-field">
+          <option value="1">Nível 1 (Aquecimento)</option>
+          <option value="2">Nível 2 (Provocação)</option>
+          <option value="3">Nível 3 (Ação & Posições)</option>
+          <option value="4">Nível 4 (Extremo & Pesado)</option>
+        </select>
+        <select id="custom-target" class="select-field">
+          <option value="Atual">Quem for a vez</option>
+          <option value="Nicolau">Para o Nicolau</option>
+          <option value="Thaís">Para a Thaís</option>
+          <option value="Ambos">Ambos juntos</option>
+        </select>
+        <input type="number" id="custom-sec" class="select-field" style="max-width: 90px;" placeholder="Segundos" />
+      </div>
+      <button class="btn-add" onclick="addCustomChallenge()">Salvar no Jogo</button>
+    </div>
+
+  </div>
+
+  <!-- Modal com Lista Completa -->
+  <div class="modal-overlay" id="challenges-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">📖 Catálogo de Desafios</div>
+        <button class="modal-close" onclick="closeChallengesModal()">&times;</button>
+      </div>
+
+      <div class="modal-filter-tabs">
+        <button class="modal-tab active" data-filter="all" onclick="filterModalList('all')">Todos</button>
+        <button class="modal-tab" data-filter="1" onclick="filterModalList(1)">Nível 1</button>
+        <button class="modal-tab" data-filter="2" onclick="filterModalList(2)">Nível 2</button>
+        <button class="modal-tab" data-filter="3" onclick="filterModalList(3)">Nível 3</button>
+        <button class="modal-tab" data-filter="4" onclick="filterModalList(4)">Nível 4</button>
+        <button class="modal-tab" data-filter="custom" onclick="filterModalList('custom')">Criados</button>
+      </div>
+
+      <div class="modal-list" id="modal-list-container">
+        <!-- Itens inseridos via Javascript -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function beep(freq = 600, duration = 0.15) {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    const defaultChallenges = [
+      // NÍVEL 1 (15)
+      { lvl: 1, text: "Olhar Fixo: Fiquem frente a frente nus ou de lingerie, olhando nos olhos sem rir nem desviar. Quem desviar cumpre um castigo escolhido pelo outro.", time: 60 },
+      { lvl: 1, text: "Massagem Firme: Massageie ombros, nuca e pescoço do outro com as pontas dos dedos e a respiração colada no ouvido.", time: 120 },
+      { lvl: 1, text: "Confissão Íntima: Conte baixinho no ouvido do parceiro qual fantasia recente com ele(a) te deixou com mais tesão.", time: 60 },
+      { lvl: 1, text: "Trilha Lenta: Percorra unhas suaves dos pulsos até as costelas e quadris do parceiro em ritmo contínuo.", time: 90 },
+      { lvl: 1, text: "Sussurros do Desejo: Fale 3 coisas bem explícitas que você quer fazer com o corpo do outro ainda hoje.", time: 60 },
+      { lvl: 1, text: "Beijos Sem Rir: Distribua beijos e mordidas suaves pelo maxilar e pescoço; quem recebe não pode esboçar nenhum sorriso.", time: 60 },
+      { lvl: 1, text: "Exploração às Cegas: O parceiro fecha os olhos enquanto você desliza as mãos pelo corpo dele(a), evitando as partes íntimas.", time: 120 },
+      { lvl: 1, text: "Mapeamento de Pulso: Beije e chupe com calma os pontos de pulso: pescoço, pulsos, clavícula e atrás dos joelhos.", time: 60 },
+      { lvl: 1, text: "Despir com Carinho: Remova uma peça de roupa do parceiro bem devagar, beijando cada centímetro de pele exposta.", time: 90 },
+      { lvl: 1, text: "Respiração no Umbigo: Aproxime a boca da barriga do outro soltando ar quente e beijando suavemente sem usar as mãos.", time: 60 },
+      { lvl: 1, text: "Massagem nas Coxas: Acaricie com firmeza a parte interna das coxas, chegando a dois dedos da virilha e recuando.", time: 120 },
+      { lvl: 1, text: "Contato Pele com Pele: Deitem-se colados de frente sem roupas, sentindo o calor e o coração bater, sem beijo na boca.", time: 90 },
+      { lvl: 1, text: "Elogio Sem Filtro: Fale em detalhes o que você mais adora visualmente e fisicamente no corpo do parceiro.", time: 60 },
+      { lvl: 1, text: "Carícia com Tecido: Passe uma peça de roupa suave ou tecido deslizando pelo peito, mamilos e abdômen do outro.", time: 90 },
+      { lvl: 1, text: "Beijo Prolongado: Um beijo de língua lento, voraz e profundo sem interrupção e sem tirar as mãos do corpo do outro.", time: 120 },
+
+      // NÍVEL 2 (15)
+      { lvl: 2, text: "Regra dos 90 Segundos: Beije, chupe e lamba pescoço, seios/peitoral e virilha, mas a boca está estritamente proibida.", time: 90 },
+      { lvl: 2, text: "Atenção aos Mamilos: Estimule os mamilos do parceiro alternando lambidas circulares, sucção firme e sopros de ar quente.", time: 120 },
+      { lvl: 2, text: "Silêncio Forçado: Quem recebe os toques íntimos é proibido de gemer. Se emitir som, cumpre um castigo do parceiro.", time: 90 },
+      { lvl: 2, text: "Despir com os Dentes: Remova a calcinha ou cueca do outro utilizando somente os dentes e lábios, sem mãos.", time: 90 },
+      { lvl: 2, text: "Oral Tease: Comece o sexo oral, mas lamba apenas virilha, coxas e a base, sem tocar a ponta mais sensível.", time: 120 },
+      { lvl: 2, text: "Mãos Imobilizadas: Segure os pulsos do parceiro acima da cabeça dele(a) na cama enquanto beija seu peito e abdômen com força.", time: 120 },
+      { lvl: 2, text: "Contraste Térmico: Use a boca aquecida ou algo gelado para percorrer a virilha e a parte interna das coxas lentamente.", time: 90 },
+      { lvl: 2, text: "Sexo Oral Dedicado: Faça sexo oral contínuo e sem pressa no parceiro, focando no ritmo exato que ele(a) mais gosta.", time: 180 },
+      { lvl: 2, text: "Toque com Olhar Fixo: Masturbe o parceiro com as mãos enquanto ambos mantêm contato visual ininterrupto.", time: 120 },
+      { lvl: 2, text: "Dedos Lubrificados: Use lubrificante ou saliva para estimular com ritmo a intimidade do parceiro, de suave a firme.", time: 120 },
+      { lvl: 2, text: "Mordidas e Cabelo: Dê mordidas firmes no pescoço e nádegas combinadas com pegada forte no cabelo na nuca.", time: 90 },
+      { lvl: 2, text: "Fricção Direta Sem Entrada: Esfreguem as genitálias nuas diretamente com pressão e ritmo, mas com penetração proibida.", time: 120 },
+      { lvl: 2, text: "Deslize Corporal: Deslize o peito e o corpo suado sobre o corpo do outro com óleo de massagem ou lubrificante.", time: 120 },
+      { lvl: 2, text: "Edging Preliminar: Leve o parceiro com a boca ou mãos até a beirada de gozar e pare tudo no segundo exato.", time: 180 },
+      { lvl: 2, text: "Toque nas Nádegas: Espalhe lubrificante massageando as nádegas e a virilha com pressão firme e respiração colada.", time: 120 },
+
+      // NÍVEL 3 (15)
+      { lvl: 3, text: "Posição de Concha (Spooning): Penetração deitados de lado por trás. Ritmo lento e profundo com mãos livres nos seios ou clitóris.", time: 180 },
+      { lvl: 3, text: "Ritmo Lento Proibido Acelerar: Posição clássica papai-e-mamãe profunda, com exata 1 investida a cada 3 segundos cronometrados.", time: 180 },
+      { lvl: 3, text: "Cowgirl Dominante: Thaís assume o topo no controle total, ditando profundidade, ritmo e fricção sem ajuda das mãos do Nicolau.", time: 180 },
+      { lvl: 3, text: "Perna no Ombro: Ela deitada de costas com uma perna apoiada no ombro dele, permitindo uma penetração profunda e direta no ponto G.", time: 180 },
+      { lvl: 3, text: "De Quatro Clássico: Penetração por trás estilo cachorrinho, com pegada firme nos quadris ou puxão de cabelo ritmado.", time: 180 },
+      { lvl: 3, text: "Posição da Borboleta: Ela com o quadril na borda da cama (apoiada em travesseiro) e ele penetrando de pé ou de joelhos.", time: 180 },
+      { lvl: 3, text: "Troca no Cronômetro: Comecem em uma posição e, ao bater 90 segundos, mudem imediatamente para outra sem parar o ritmo.", time: 180 },
+      { lvl: 3, text: "Cowgirl Invertida: Ela por cima de costas para ele, inclinando o tronco e controlando a intensidade das investidas.", time: 180 },
+      { lvl: 3, text: "Em Pé Apoiado: Ela apoiada na parede ou cômoda com ele penetrando em pé, com investidas firmes e pegada nas coxas.", time: 180 },
+      { lvl: 3, text: "Penetração + Estimulação: Penetração ritmada combinada obrigatoriamente com dedos estimulando o clitóris sem parar.", time: 180 },
+      { lvl: 3, text: "Papai-e-Mamãe Dobrada: Ela deita com os joelhos pressionados contra o próprio peito para uma penetração extremamente profunda.", time: 180 },
+      { lvl: 3, text: "Palmadas no Ritmo: Distribua palmadas firmes e sonoras nas nádegas a cada investida na penetração por trás.", time: 120 },
+      { lvl: 3, text: "Dirty Talk Explícito: Fale no ouvido durante a penetração tudo o que você está sentindo, usando palavras sem filtro.", time: 120 },
+      { lvl: 3, text: "Fricção Pélvica Travada: Encaixe completo sem sair de dentro; apenas rebolem e pressionem o osso pélvico contra o clitóris.", time: 120 },
+      { lvl: 3, text: "Aceleração Progressiva: 1º minuto bem lento, 2º minuto moderado e 3º minuto no ritmo mais rápido que aguentarem.", time: 180 },
+
+      // NÍVEL 4 (15 EXTREMOS)
+      { lvl: 4, text: "Oral Profundo Agressivo: Sexo oral profundo e sem pausas, com mão firme guiando a nuca e impondo o ritmo.", time: 180 },
+      { lvl: 4, text: "Edging Triplo Forçado: Leve o parceiro três vezes seguidas ao limiar de gozar e pare tudo na hora. Proibido gozar sem ordem.", time: 240 },
+      { lvl: 4, text: "Submissão Total Vendada: Um dos dois fica vendado e com as mãos presas ou contidas; o outro usa o corpo com controle absoluto.", time: 240 },
+      { lvl: 4, text: "De Quatro com Peito Colado: De quatro bem rebaixada, com o parceiro colando o peito nas costas e penetrando com força bruta.", time: 240 },
+      { lvl: 4, text: "Face Sitting / Comando: Ela senta direto no rosto dele controlando a pressão e o peso, ditando língua e sucção.", time: 180 },
+      { lvl: 4, text: "Spanking Pesado: Sequência de tapas fortes com a mão aberta nas nádegas e coxas antes e durante as estocadas.", time: 120 },
+      { lvl: 4, text: "Posição da Carriola Suspensa: Ela apoia as mãos na cama enquanto ele ergue as pernas dela no ar e penetra por trás no ritmo.", time: 120 },
+      { lvl: 4, text: "Ritmo Máximo Sem Parar: Penetração contínua na intensidade mais rápida e pesada possível pelos 3 minutos completos.", time: 180 },
+      { lvl: 4, text: "Exploração Anal Preliminar: Uso abundante de lubrificante para estimular o ânus com dedos ou língua durante o sexo.", time: 180 },
+      { lvl: 4, text: "Dupla Estimulação Direta: Penetração ativa somada à introdução de vibrador ou dedos no outro ponto ao mesmo tempo.", time: 180 },
+      { lvl: 4, text: "Dominação e Posse: Mão firme na garganta/mandíbula (sem asfixiar, apenas pressão de posse) e beijos vorazes forçados.", time: 120 },
+      { lvl: 4, text: "Pregador Aprofundado: Ela com as pernas cruzadas atrás da nuca dele enquanto ele desce o quadril com pressão total.", time: 240 },
+      { lvl: 4, text: "Fantasia Crua Narrada: Narre no ouvido a fantasia mais pesada ou proibida que tiver enquanto mete sem piedade.", time: 180 },
+      { lvl: 4, text: "Marcas Corporais: Deixe marcas de mordidas e sucções intensas nas coxas, ombros ou peito no auge da investida.", time: 120 },
+      { lvl: 4, text: "Permissão para Gozar: O parceiro só tem autorização de atingir o orgasmo se quem estiver no comando der a ordem verbal.", time: 240 }
+    ];
+
+    let customChallenges = JSON.parse(localStorage.getItem('casal_custom_challenges') || '[]');
+    let currentLevel = 1;
+    let isLevel4Unlocked = false;
+    let currentPlayerMode = 'Nicolau';
+    let lastAutoPlayer = 'Nicolau';
+
+    // 2 Pulos para cada um por padrão
+    let skips = { Nicolau: 2, Thais: 2 };
+
+    let timerInterval = null;
+    let timerSeconds = 0;
+
+    function updateCustomCount() {
+      document.getElementById('custom-count').innerText = `${customChallenges.length} criados`;
+    }
+    updateCustomCount();
+
+    function updateSkipLabel() {
+      document.getElementById('skip-label').innerText = `N: ${skips.Nicolau} | T: ${skips.Thais}`;
+    }
+
+    function resetSkips() {
+      skips = { Nicolau: 2, Thais: 2 };
+      updateSkipLabel();
+      beep(600, 0.1);
+      alert('Pulos renovados! 2 para o Nicolau e 2 para a Thaís.');
+    }
+
+    function toggleLevel4() {
+      isLevel4Unlocked = !isLevel4Unlocked;
+      const tabLvl4 = document.getElementById('tab-lvl4');
+      const icon = document.getElementById('tab-lvl4-icon');
+      const btn = document.getElementById('lvl4-toggle-btn');
+      const statusText = document.getElementById('lvl4-status-text');
+
+      if (isLevel4Unlocked) {
+        tabLvl4.classList.remove('locked');
+        icon.innerText = '💀';
+        btn.classList.add('active');
+        btn.innerText = 'Travar Nível 4';
+        statusText.innerText = 'Liberado 🔥';
+        statusText.style.color = '#dc2626';
+        beep(800, 0.2);
+      } else {
+        tabLvl4.classList.add('locked');
+        icon.innerText = '🔒';
+        btn.classList.remove('active');
+        btn.innerText = 'Ativar Nível 4';
+        statusText.innerText = 'Desativado';
+        statusText.style.color = '#888';
+        if (currentLevel === 4) setLevel(1);
+        beep(400, 0.15);
+      }
+    }
+
+    function setPlayer(p) {
+      currentPlayerMode = p;
+      document.querySelectorAll('.player-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.player === p);
+      });
+    }
+
+    function setLevel(lvl) {
+      if (lvl === 4 && !isLevel4Unlocked) {
+        const confirmUnlock = confirm("O Nível 4 contém desafios extremos e pesados (BDSM leve, sexo oral agressivo, dominação). Vocês dois desejam liberar agora?");
+        if (confirmUnlock) {
+          toggleLevel4();
+        } else {
+          return;
+        }
+      }
+
+      currentLevel = lvl;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lvl == lvl);
+      });
+    }
+
+    function getActivePlayerName() {
+      if (currentPlayerMode === 'Auto') {
+        lastAutoPlayer = (lastAutoPlayer === 'Nicolau') ? 'Thaís' : 'Nicolau';
+        return lastAutoPlayer;
+      }
+      return currentPlayerMode === 'Nicolau' ? 'Nicolau' : 'Thaís';
+    }
+
+    function drawCard() {
+      if (navigator.vibrate) navigator.vibrate(40);
+      beep(550, 0.1);
+
+      let all = [...defaultChallenges, ...customChallenges];
+      let pool;
+      if (currentLevel === 'all') {
+        pool = isLevel4Unlocked ? all : all.filter(c => c.lvl !== 4);
+      } else {
+        pool = all.filter(c => c.lvl == currentLevel);
+      }
+
+      if (pool.length === 0) pool = defaultChallenges.filter(c => c.lvl == 1);
+
+      const item = pool[Math.floor(Math.random() * pool.length)];
+      const targetPlayer = item.target || getActivePlayerName();
+
+      const card = document.getElementById('card');
+      card.style.transform = 'scale(0.96)';
+      setTimeout(() => { card.style.transform = 'scale(1)'; }, 140);
+
+      const badge = document.getElementById('card-badge');
+      badge.className = 'card-badge badge-l' + item.lvl;
+      const lvlNames = { 
+        1: 'Nível 1 • Aquecimento', 
+        2: 'Nível 2 • Provocação', 
+        3: 'Nível 3 • Ação & Posições', 
+        4: 'Nível 4 • Extremo & Pesado' 
+      };
+      badge.innerText = lvlNames[item.lvl] || `Nível ${item.lvl}`;
+
+      document.getElementById('card-target').innerText = `Vez de: ${targetPlayer}`;
+      document.getElementById('card-text').innerText = item.text;
+
+      setTimerSeconds(item.time || 60);
+    }
+
+    function useSkip() {
+      const active = (currentPlayerMode === 'Auto') ? lastAutoPlayer : (currentPlayerMode === 'Nicolau' ? 'Nicolau' : 'Thais');
+      const key = active === 'Nicolau' ? 'Nicolau' : 'Thais';
+
+      if (skips[key] > 0) {
+        skips[key]--;
+        updateSkipLabel();
+        beep(300, 0.2);
+        drawCard();
+      } else {
+        alert(`${active} já gastou seus 2 pulos desta rodada! Tem que cumprir o desafio 😉`);
+      }
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+      const s = (timerSeconds % 60).toString().padStart(2, '0');
+      document.getElementById('timer-display').innerText = `${m}:${s}`;
+    }
+
+    function setTimerSeconds(sec) {
+      pauseTimer();
+      timerSeconds = sec;
+      updateTimerDisplay();
+    }
+
+    function startTimer() {
+      if (timerInterval || timerSeconds <= 0) return;
+      timerInterval = setInterval(() => {
+        timerSeconds--;
+        updateTimerDisplay();
+        if (timerSeconds <= 0) {
+          pauseTimer();
+          beep(800, 0.3);
+          setTimeout(() => beep(1000, 0.4), 300);
+          if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 300]);
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      timerSeconds = 0;
+      updateTimerDisplay();
+    }
+
+    function addCustomChallenge() {
+      const text = document.getElementById('custom-text').value.trim();
+      const lvl = parseInt(document.getElementById('custom-level').value, 10);
+      const target = document.getElementById('custom-target').value;
+      const secInput = parseInt(document.getElementById('custom-sec').value, 10);
+      const sec = (secInput && secInput > 0) ? secInput : 60;
+
+      if (!text) {
+        alert('Escreva o desafio antes de salvar!');
+        return;
+      }
+
+      const newIdea = {
+        lvl: lvl,
+        text: text,
+        target: target === 'Atual' ? null : target,
+        time: sec,
+        isCustom: true
+      };
+
+      customChallenges.push(newIdea);
+      localStorage.setItem('casal_custom_challenges', JSON.stringify(customChallenges));
+      updateCustomCount();
+
+      document.getElementById('custom-text').value = '';
+      document.getElementById('custom-sec').value = '';
+      beep(700, 0.15);
+      alert(`Desafio salvo no Nível ${lvl} com ${sec} segundos!`);
+    }
+
+    // Modal de Visualização da Lista Completa
+    let currentModalFilter = 'all';
+
+    function openChallengesModal() {
+      document.getElementById('challenges-modal').classList.add('open');
+      renderModalList();
+    }
+
+    function closeChallengesModal() {
+      document.getElementById('challenges-modal').classList.remove('open');
+    }
+
+    function filterModalList(filter) {
+      currentModalFilter = filter;
+      document.querySelectorAll('.modal-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.filter == filter);
+      });
+      renderModalList();
+    }
+
+    function renderModalList() {
+      const container = document.getElementById('modal-list-container');
+      container.innerHTML = '';
+
+      let list = [];
+      if (currentModalFilter === 'custom') {
+        list = customChallenges;
+      } else if (currentModalFilter === 'all') {
+        list = [...defaultChallenges, ...customChallenges];
+      } else {
+        const lvlNum = parseInt(currentModalFilter, 10);
+        list = [...defaultChallenges, ...customChallenges].filter(c => c.lvl === lvlNum);
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding:30px 10px;">Nenhum desafio encontrado nesta categoria.</div>';
+        return;
+      }
+
+      list.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'list-item';
+
+        const lvlNames = { 
+          1: 'Nível 1 • Aquecimento', 
+          2: 'Nível 2 • Provocação', 
+          3: 'Nível 3 • Ação & Posições', 
+          4: 'Nível 4 • Extremo & Pesado' 
+        };
+
+        const targetInfo = item.target ? ` (${item.target})` : '';
+        const customBadge = item.isCustom ? ' [Criado]' : '';
+
+        div.innerHTML = `
+          <div class="list-item-header">
+            <span class="list-item-lvl">${lvlNames[item.lvl] || 'Nível ' + item.lvl}${customBadge}${targetInfo}</span>
+            <span class="list-item-time">⏱️ ${item.time}s</span>
+          </div>
+          <div class="list-item-text">${item.text}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
